@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The date picker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2a310; /* Light orange background */
+        }
+
+        #levels-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f7efe1;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .level {
+            margin-bottom: 20px;
+        }
+
+        .level button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #b56aae;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #submit-btn {
+            display: none; /* Initially hidden */
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #b544ab;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="levels-container">
+        <h1>The date picker</h1>
+    <div>
+        <p>hi, I got kinda bored of working and so I made this. It is just for fun and the options are really not strict but I hope it makes you gigle a bit <3</p>
+    </div>
+        <div class="level" id="level0">
+            <!-- Level 0 options will be added dynamically with JavaScript -->
+        </div>
+        <div class="level" id="level1">
+            <!-- Level 1 options will be added dynamically with JavaScript -->
+        </div>
+        <div class="level" id="level2">
+            <!-- Level 2 options will be added dynamically with JavaScript -->
+        </div>
+        <div class="level" id="level3">
+            <!-- Level 3 options will be added dynamically with JavaScript -->
+        </div>
+        <button id="submit-btn">Share</button>
+    </div>
+
+    <script>
+        const levels = [
+            ["meeting in the city center"],
+            ["have a nice walk around"],
+            ["go to hot Italian's home and have pasta", "eat out somewhere"],
+            ["watch a terrible movie/TV show together", "play some videogames together", "go to a pub and waste some time there", "go to the beach for a cold but romantic night"]
+        ];
+
+        const selections = [];
+
+        function createOptionButton(levelIndex, option) {
+            const button = document.createElement('button');
+            button.textContent = option;
+            button.addEventListener('click', () => {
+                selections[levelIndex] = option;
+                const nextLevelIndex = levelIndex + 1;
+                if (nextLevelIndex < levels.length) {
+                    renderLevel(nextLevelIndex);
+                } else {
+                    document.getElementById('submit-btn').style.display = 'block'; // Show submit button
+                }
+                // Hide options from previous levels
+                for (let i = 0; i < levelIndex; i++) {
+                    document.getElementById(`level${i}`).style.display = 'none';
+                }
+            });
+            return button;
+        }
+        const tot_containers = 4;
+        function renderLevel(levelIndex) {
+            for(let i = 0; i < tot_containers; i ++){
+                let cont = document.getElementById(`level${i}`);
+                cont.innerHTML = '';
+            }
+            const levelContainer = document.getElementById(`level${levelIndex}`);
+            const levelOptions = levels[levelIndex];
+            levelOptions.forEach(option => {
+                const button = createOptionButton(levelIndex, option);
+                levelContainer.appendChild(button);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderLevel(0);
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.addEventListener('click', () => {
+                // Save selections locally (for demonstration, using localStorage)
+                localStorage.setItem('userSelections', JSON.stringify(selections));
+                saveJSON()
+                alert('Selections saved locally!');
+            });
+        });
+
+        function saveJSON() {
+            let data = JSON.stringify(selections);
+            let bl = new Blob([data], {
+                type: "text/html"
+            });
+            let a = document.createElement("a");
+            a.href = URL.createObjectURL(bl);
+            a.download = "date.json";
+            a.hidden = true;
+            document.body.appendChild(a);
+            a.innerHTML =
+                "someinnerhtml";
+            a.click();
+        }
+    </script>
+</body>
+</html>
+
